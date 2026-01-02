@@ -1,8 +1,8 @@
 import { SYSTEM_PROMPT, SAFETY_REFUSAL_RESPONSE, CAMPAIGN_RULES } from '../src/config/constants';
 
 describe('Constants', () => {
-    test('SYSTEM_PROMPT should contain HopHop Bot', () => {
-        expect(SYSTEM_PROMPT).toContain('HopHop Bot');
+    test('SYSTEM_PROMPT should contain Hop Hop Bot', () => {
+        expect(SYSTEM_PROMPT).toContain('Hop Hop Bot');
     });
 
     test('SYSTEM_PROMPT should contain the CTA', () => {
