@@ -1,64 +1,46 @@
-import prisma from './db';
-import redis from './redis';
+// Redis disabled for in-memory mode
 import logger from '../utils/logger';
+
+// ⚠️ IN-MEMORY STORAGE (VOLATILE)
+// This replaces the database for emergency stability.
+// Data is lost when the server restarts.
+const localSessionStore = new Map<string, any>();
 
 class MemoryService {
 
     async getSession(userId: string) {
         try {
-            // Try Redis first if available
-            if (redis) {
-                const cached = await redis.get(`session:${userId}`);
-                if (cached) return JSON.parse(cached);
-            }
-
-            // If not in Redis, find or create user in DB
-            let user = await prisma.user.findUnique({
-                where: { manychat_id: userId },
-                include: { sessions: true }
-            });
-
-            if (!user) {
-                user = await prisma.user.create({
-                    data: {
-                        manychat_id: userId,
-                        sessions: {
-                            create: { history: [] }
-                        }
-                    },
-                    include: { sessions: true }
+            if (!localSessionStore.has(userId)) {
+                logger.info(`Creating new in-memory session for ${userId}`);
+                localSessionStore.set(userId, {
+                    id: `session-${userId}`,
+                    history: []
                 });
             }
-
-            // Return the most recent session
-            return user.sessions[0];
+            return localSessionStore.get(userId);
         } catch (error) {
             logger.error('Error fetching session', error);
-            return null;
+            // Return empty session to prevent crash
+            return { id: 'fallback', history: [] };
         }
     }
 
     async updateHistory(userId: string, userMessage: string, botResponse: string) {
         try {
-            // Append to Redis or DB session
-            // For MVP we just update Redis and periodically sync or sync on end
-            const sessionKey = `session:${userId}`;
-            const sessionData = await this.getSession(userId);
+            const session = await this.getSession(userId);
+            if (!session) return;
 
-            if (!sessionData) return;
+            const newHistory = [
+                ...(session.history || []),
+                { role: 'user', content: userMessage },
+                { role: 'assistant', content: botResponse }
+            ];
 
-            const newHistory = [...(sessionData.history as any[] || []), { role: 'user', content: userMessage }, { role: 'assistant', content: botResponse }];
+            // Update local store
+            session.history = newHistory;
+            localSessionStore.set(userId, session);
 
-            // Update Redis if available
-            if (redis) {
-                await redis.set(sessionKey, JSON.stringify({ ...sessionData, history: newHistory }), 'EX', 3600);
-            }
-
-            // Update DB (async)
-            prisma.session.update({
-                where: { id: sessionData.id },
-                data: { history: newHistory }
-            }).catch((err: any) => logger.error('DB update failed', err));
+            logger.info(`Updated in-memory history for ${userId}. Messages: ${newHistory.length}`);
 
         } catch (error) {
             logger.error('Error updating history', error);
@@ -66,13 +48,12 @@ class MemoryService {
     }
 
     async searchMemories(userId: string, query: string, limit: number = 3) {
-        // TODO: Implement vector search via Prisma + pgvector
-        // For now returning empty context
+        // Disabled for simplified mode
         return [];
     }
 
     async saveMemory(userId: string, content: string) {
-        // TODO: Generate embedding and save to DB
+        // Disabled for simplified mode
     }
 }
 
