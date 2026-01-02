@@ -53,11 +53,12 @@ const chat = async () => {
             // Clear "Bot is typing" line
             process.stdout.write('                       \r');
 
-            const reply = response.data.reply;
+            // Handle both new and old formats
+            const reply = response.data.response?.reply || response.data.reply;
             console.log(`Bot: ${reply}`);
             console.log('--------------------------------------------------');
 
-            if (response.data.metadata?.filtered) {
+            if (response.data.response?.metadata?.filtered || response.data.metadata?.filtered) {
                 console.log('⚠️  (Safety Filter Triggered)');
             }
 

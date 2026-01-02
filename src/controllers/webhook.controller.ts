@@ -35,9 +35,11 @@ export const handleManyChatWebhook = async (req: Request, res: Response) => {
         if (containsBannedContent(sanitizedMessage)) {
             logger.warn(`Banned content detected from ${subscriber_id}: ${sanitizedMessage}`);
             return res.status(200).json({
-                reply: SAFETY_REFUSAL_RESPONSE,
-                quick_replies: ["I followed", "I posted", "Help"],
-                metadata: { filtered: true }
+                response: {
+                    reply: SAFETY_REFUSAL_RESPONSE,
+                    quick_replies: ["I followed", "I posted", "Help"],
+                    metadata: { filtered: true }
+                }
             });
         }
 
@@ -57,6 +59,9 @@ export const handleManyChatWebhook = async (req: Request, res: Response) => {
         ];
 
         // 4. Generate Response using the EDITABLE system prompt
+        const startTime = Date.now();
+        logger.info(`Starting LLM generation for ${subscriber_id}...`);
+
         const botResponse = await llmService.generateResponse(
             SYSTEM_PROMPT,
             sanitizedMessage,
@@ -64,14 +69,22 @@ export const handleManyChatWebhook = async (req: Request, res: Response) => {
             userContext
         );
 
+        const duration = Date.now() - startTime;
+        logger.info(`LLM generation complete for ${subscriber_id} in ${duration}ms`);
+
         // 5. Update History
         await memoryService.updateHistory(subscriber_id, sanitizedMessage, botResponse);
 
         // 6. Send Response back to ManyChat
+        // WRAPPING IN 'response' object as requested by user/ManyChat debugging
+        logger.info(`Sending response to ${subscriber_id}: ${botResponse.substring(0, 50)}...`);
+
         res.status(200).json({
-            reply: botResponse,
-            quick_replies: ["I followed", "I posted", "Help"],
-            metadata: { session_id: session?.id }
+            response: {
+                reply: botResponse,
+                quick_replies: ["I followed", "I posted", "Help"],
+                metadata: { session_id: session?.id }
+            }
         });
 
     } catch (error) {
