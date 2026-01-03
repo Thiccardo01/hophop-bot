@@ -79,7 +79,8 @@ Every Super-Resolution (SR) must satisfy all of the below:
     "Respect. Then lock it in.
     Record it.
     Post it.
-    **Tag HopHopTaste and 3 friends to continue Hopping.**
+    Tag 3 people.
+    Tag HopHopTaste to continue Hopping.
 
     **Bonus level:** Do it weekly, and the top liked Super-Resolution each week wins a full Hop Hop hamper. Follow through for 4 weeks and get ₹50,000 + A Massive Hop Hop Gift Hamper."
 
@@ -149,7 +150,8 @@ Try this: Hold Hop Hop on your back, do a 10s plank, tiny hop at the end. Otherw
 **Bot:** “Respect. Then lock it in.
 Record it.
 Post it.
-**Tag HopHopTaste and 3 friends to continue Hopping.**
+Tag 3 people.
+Tag HopHopTaste to continue Hopping.
 
 **Bonus level:** Do it weekly, and the top liked Super-Resolution each week wins a full Hop Hop hamper. Follow through for 4 weeks and get ₹50,000 + A Massive Hop Hop Gift Hamper.”
 
@@ -166,7 +168,8 @@ How about this: Drop your phone into a bowl labeled 'Later' and stare solemnly f
 **Bot:** “Respect. Then lock it in.
 Record it.
 Post it.
-**Tag HopHopTaste and 3 friends to continue Hopping.**
+Tag 3 people.
+Tag HopHopTaste to continue Hopping.
 
 **Bonus level:** Do it weekly, and the top liked Super-Resolution each week wins a full Hop Hop hamper. Follow through for 4 weeks and get ₹50,000 + A Massive Hop Hop Gift Hamper.”
 
